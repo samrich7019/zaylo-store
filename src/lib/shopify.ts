@@ -1,69 +1,70 @@
-const domain = process.env.SHOPIFY_STORE_DOMAIN;
+const domain = process.env.SHOPIFY_STORE_DOMAIN?.replace(/^https?:\/\//, '').replace(/\/$/, '');
 const storefrontAccessToken = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 
 async function shopifyFetch<T>({
-    query,
-    variables,
+  query,
+  variables,
 }: {
-    query: string;
-    variables?: Record<string, any>;
+  query: string;
+  variables?: Record<string, any>;
 }): Promise<T | undefined> {
-    if (!domain || !storefrontAccessToken) {
-        console.warn("Shopify credentials not found. Using mock data if available.");
-        return undefined;
+  if (!domain || !storefrontAccessToken) {
+    console.warn("Shopify credentials not found. Using mock data if available.");
+    console.warn("Missing: ", !domain ? "SHOPIFY_STORE_DOMAIN" : "", !storefrontAccessToken ? "SHOPIFY_STOREFRONT_ACCESS_TOKEN" : "");
+    return undefined;
+  }
+
+  try {
+    const result = await fetch(`https://${domain}/api/2024-01/graphql.json`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Shopify-Storefront-Access-Token': storefrontAccessToken,
+      },
+      body: JSON.stringify({ query, variables }),
+      cache: 'no-store', // or 'force-cache' depending on needs
+    });
+
+    const body = await result.json();
+
+    if (body.errors) {
+      throw body.errors[0];
     }
 
-    try {
-        const result = await fetch(`https://${domain}/api/2024-01/graphql.json`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-Shopify-Storefront-Access-Token': storefrontAccessToken,
-            },
-            body: JSON.stringify({ query, variables }),
-            cache: 'no-store', // or 'force-cache' depending on needs
-        });
-
-        const body = await result.json();
-
-        if (body.errors) {
-            throw body.errors[0];
-        }
-
-        return body.data;
-    } catch (e) {
-        console.error("Shopify API Error:", e);
-        return undefined;
-    }
+    return body.data;
+  } catch (e) {
+    console.error("Shopify API Error:", e);
+    return undefined;
+  }
 }
 
 export type ShopifyProduct = {
-    id: string;
-    handle: string;
-    title: string;
-    description: string;
-    priceRange: {
-        minVariantPrice: {
-            amount: string;
-            currencyCode: string;
-        };
+  id: string;
+  handle: string;
+  title: string;
+  description: string;
+  priceRange: {
+    minVariantPrice: {
+      amount: string;
+      currencyCode: string;
     };
-    images: {
-        edges: {
-            node: {
-                url: string;
-                altText: string;
-            };
-        }[];
-    };
-    variants: {
-        edges: {
-            node: {
-                id: string;
-                title: string;
-            };
-        }[];
-    };
+  };
+  images: {
+    edges: {
+      node: {
+        url: string;
+        altText: string;
+      };
+    }[];
+  };
+  variants: {
+    edges: {
+      node: {
+        id: string;
+        title: string;
+      };
+    }[];
+  };
 };
 
 const PRODUCTS_QUERY = `
@@ -160,28 +161,28 @@ const PRODUCT_QUERY = `
 `;
 
 export async function getProducts(): Promise<ShopifyProduct[]> {
-    const data = await shopifyFetch<{ products: { edges: { node: ShopifyProduct }[] } }>({
-        query: PRODUCTS_QUERY,
-        variables: { first: 10 },
-    });
+  const data = await shopifyFetch<{ products: { edges: { node: ShopifyProduct }[] } }>({
+    query: PRODUCTS_QUERY,
+    variables: { first: 10 },
+  });
 
-    return data?.products.edges.map((edge) => edge.node) || [];
+  return data?.products.edges.map((edge) => edge.node) || [];
 }
 
 export async function getCollectionProducts(handle: string): Promise<ShopifyProduct[]> {
-    const data = await shopifyFetch<{ collection: { products: { edges: { node: ShopifyProduct }[] } } }>({
-        query: COLLECTION_QUERY,
-        variables: { handle },
-    });
+  const data = await shopifyFetch<{ collection: { products: { edges: { node: ShopifyProduct }[] } } }>({
+    query: COLLECTION_QUERY,
+    variables: { handle },
+  });
 
-    return data?.collection?.products.edges.map((edge) => edge.node) || [];
+  return data?.collection?.products.edges.map((edge) => edge.node) || [];
 }
 
 export async function getProduct(handle: string): Promise<ShopifyProduct | undefined> {
-    const data = await shopifyFetch<{ product: ShopifyProduct }>({
-        query: PRODUCT_QUERY,
-        variables: { handle },
-    });
+  const data = await shopifyFetch<{ product: ShopifyProduct }>({
+    query: PRODUCT_QUERY,
+    variables: { handle },
+  });
 
-    return data?.product;
+  return data?.product;
 }
