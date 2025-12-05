@@ -7,7 +7,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
     const { id } = await params
 
     let product = null;
-    const shopifyProduct = await getProduct(id);
+    const { product: shopifyProduct } = await getProduct(id);
 
     if (shopifyProduct) {
         product = {

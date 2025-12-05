@@ -9,7 +9,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
     let products = [];
 
     if (slug === "all") {
-        const shopifyProducts = await getProducts();
+        const { products: shopifyProducts } = await getProducts();
         products = shopifyProducts && shopifyProducts.length > 0
             ? shopifyProducts.map(p => ({
                 id: p.handle,
@@ -20,7 +20,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ slu
             }))
             : staticProducts;
     } else {
-        const shopifyProducts = await getCollectionProducts(slug);
+        const { products: shopifyProducts } = await getCollectionProducts(slug);
         if (shopifyProducts && shopifyProducts.length > 0) {
             products = shopifyProducts.map(p => ({
                 id: p.handle,
