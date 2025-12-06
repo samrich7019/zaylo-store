@@ -5,6 +5,7 @@ import { AnimatedGradient } from "@/components/ui/animated-gradient"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, Sparkles, Zap, Shield } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 const floatingAnimation = {
     y: [0, -20, 0],
@@ -24,10 +25,17 @@ const pulseAnimation = {
 
 export function HeroSection() {
     return (
-        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-            {/* Animated Gradient Background */}
-            <div className="absolute inset-0 opacity-20">
-                <AnimatedGradient />
+        <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-br from-[#0a1628] via-[#1a2642] to-[#0f1f3d]">
+            {/* Background Image - Throne Style */}
+            <div className="absolute inset-0">
+                <Image
+                    src="/images/hero-headphones.png"
+                    alt="Premium Headphones"
+                    fill
+                    className="object-cover opacity-40"
+                    priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-transparent to-black/60" />
             </div>
 
             {/* Grid Pattern Overlay */}
@@ -57,7 +65,7 @@ export function HeroSection() {
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: 0.2 }}
                         whileHover={{ scale: 1.05 }}
-                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium cursor-default"
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-primary text-sm font-medium cursor-default backdrop-blur-sm"
                     >
                         <motion.div animate={pulseAnimation}>
                             <Sparkles className="w-4 h-4" />
@@ -70,9 +78,9 @@ export function HeroSection() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.3 }}
-                        className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight"
+                        className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white"
                     >
-                        Elevate Your Tech{" "}
+                        Where <span className="text-orange-500">Excellence</span> Meets{" "}
                         <motion.span
                             className="gradient-text inline-block"
                             animate={{
@@ -80,7 +88,7 @@ export function HeroSection() {
                             }}
                             transition={{ duration: 5, repeat: Infinity }}
                         >
-                            With Style
+                            Deep Resonance
                         </motion.span>
                     </motion.h1>
 
@@ -89,9 +97,9 @@ export function HeroSection() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.4 }}
-                        className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
+                        className="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed"
                     >
-                        Discover premium phone cases, wireless earbuds, and charging solutions designed for the modern lifestyle. Fast delivery across Pakistan with COD available.
+                        Crafted for audiophiles, experience sublime clarity, warmth, and power daily.
                     </motion.p>
 
                     {/* CTA Buttons */}
@@ -103,29 +111,18 @@ export function HeroSection() {
                     >
                         <Link href="/collections/all">
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <Button size="lg" className="group text-lg px-8 py-6 rounded-full relative overflow-hidden">
-                                    <motion.div
-                                        className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/20 to-primary/0"
-                                        animate={{
-                                            x: ["-100%", "100%"],
-                                        }}
-                                        transition={{
-                                            duration: 2,
-                                            repeat: Infinity,
-                                            ease: "linear",
-                                        }}
-                                    />
+                                <Button size="lg" className="group text-lg px-8 py-6 rounded-full relative overflow-hidden bg-white text-black hover:bg-gray-100">
                                     <span className="relative z-10 flex items-center gap-2">
-                                        Shop Now
+                                        Explore
                                         <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     </span>
                                 </Button>
                             </motion.div>
                         </Link>
-                        <Link href="/about">
+                        <Link href="/collections/all">
                             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                                <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-full">
-                                    Learn More
+                                <Button size="lg" variant="outline" className="text-lg px-8 py-6 rounded-full border-white text-white hover:bg-white/10">
+                                    Shop now
                                 </Button>
                             </motion.div>
                         </Link>
@@ -136,7 +133,7 @@ export function HeroSection() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         transition={{ delay: 0.7 }}
-                        className="flex flex-wrap justify-center gap-8 pt-12 text-sm text-muted-foreground"
+                        className="flex flex-wrap justify-center gap-8 pt-12 text-sm text-gray-300"
                     >
                         {[
                             { icon: Shield, text: "Cash on Delivery" },
@@ -174,12 +171,12 @@ export function HeroSection() {
                 <motion.div
                     animate={{ y: [0, 10, 0] }}
                     transition={{ repeat: Infinity, duration: 1.5 }}
-                    className="w-6 h-10 border-2 border-foreground/20 rounded-full p-1"
+                    className="w-6 h-10 border-2 border-white/40 rounded-full p-1"
                 >
                     <motion.div
                         animate={{ y: [0, 12, 0] }}
                         transition={{ repeat: Infinity, duration: 1.5 }}
-                        className="w-1.5 h-1.5 bg-foreground/40 rounded-full mx-auto"
+                        className="w-1.5 h-1.5 bg-white/60 rounded-full mx-auto"
                     />
                 </motion.div>
             </motion.div>
