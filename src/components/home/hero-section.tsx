@@ -11,7 +11,6 @@ const floatingAnimation = {
     transition: {
         duration: 3,
         repeat: Infinity,
-        ease: "easeInOut"
     }
 }
 
@@ -20,7 +19,6 @@ const pulseAnimation = {
     transition: {
         duration: 2,
         repeat: Infinity,
-        ease: "easeInOut"
     }
 }
 
