@@ -1,6 +1,8 @@
 import { getProducts } from "@/lib/shopify"
-import { products as staticProducts } from "@/lib/data"
-import HomeView from "@/components/home/home-view"
+import { HeroSection } from "@/components/home/hero-section"
+import { FeaturedCategories } from "@/components/home/featured-categories"
+import { ProductShowcase } from "@/components/home/product-showcase"
+import { TrustSection } from "@/components/home/trust-section"
 
 export default async function Home() {
     const { products: shopifyProducts, error } = await getProducts();
@@ -11,14 +13,15 @@ export default async function Home() {
             title: p.title,
             price: parseFloat(p.priceRange.minVariantPrice.amount),
             image: p.images.edges[0]?.node.url || "/images/product-case.png",
-            category: "Accessory"
+            category: "Accessory",
+            handle: p.handle,
         }))
-        : staticProducts.slice(0, 4);
+        : [];
 
     return (
         <>
             {error && (
-                <div className="bg-red-500 text-white p-4 text-center font-bold">
+                <div className="bg-destructive text-destructive-foreground p-4 text-center font-bold">
                     ⚠️ Connection Error: {error}
                     <br />
                     <span className="text-sm font-normal opacity-90">
@@ -26,7 +29,11 @@ export default async function Home() {
                     </span>
                 </div>
             )}
-            <HomeView products={products} />
+
+            <HeroSection />
+            <FeaturedCategories />
+            <ProductShowcase products={products} />
+            <TrustSection />
         </>
     )
 }
