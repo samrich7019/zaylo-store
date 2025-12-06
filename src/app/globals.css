@@ -28,44 +28,95 @@
   --color-card: hsl(var(--card));
   --color-card-foreground: hsl(var(--card-foreground));
 
+  /* Stripe-inspired gradients */
+  --color-gradient-start: hsl(var(--gradient-start));
+  --color-gradient-end: hsl(var(--gradient-end));
+  --color-gradient-accent: hsl(var(--gradient-accent));
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 }
 
-/* Zaylo Brand Colors */
+/* Stripe-Inspired Design System */
 :root {
   --background: 0 0% 100%;
-  --foreground: 0 0% 0%;
+  --foreground: 222 47% 11%;
 
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 0%;
+  --card-foreground: 222 47% 11%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 0%;
+  --popover-foreground: 222 47% 11%;
 
-  --primary: 210 100% 56%;
-  /* Electric Blue #1E90FF */
+  /* Primary - Vibrant Blue */
+  --primary: 221 83% 53%;
   --primary-foreground: 0 0% 100%;
 
-  --secondary: 0 0% 96%;
-  /* Light Grey #F5F5F5 */
-  --secondary-foreground: 0 0% 0%;
+  /* Secondary - Soft Purple */
+  --secondary: 262 52% 47%;
+  --secondary-foreground: 0 0% 100%;
 
-  --muted: 0 0% 96%;
-  --muted-foreground: 0 0% 45%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%;
 
-  --accent: 0 0% 96%;
-  --accent-foreground: 0 0% 0%;
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
 
-  --destructive: 0 84.2% 60.2%;
+  --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 98%;
 
-  --border: 0 0% 90%;
-  --input: 0 0% 90%;
-  --ring: 210 100% 56%;
+  --border: 214 32% 91%;
+  --input: 214 32% 91%;
+  --ring: 221 83% 53%;
 
-  --radius: 0.5rem;
+  --radius: 0.75rem;
+
+  /* Stripe-inspired gradient colors */
+  --gradient-start: 221 83% 53%;
+  /* Blue */
+  --gradient-end: 262 52% 47%;
+  /* Purple */
+  --gradient-accent: 340 82% 52%;
+  /* Pink accent */
+
+  /* Animation variables */
+  --animation-duration: 0.3s;
+  --animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --background: 222 47% 11%;
+  --foreground: 210 40% 98%;
+
+  --card: 222 47% 11%;
+  --card-foreground: 210 40% 98%;
+
+  --popover: 222 47% 11%;
+  --popover-foreground: 210 40% 98%;
+
+  --primary: 221 83% 53%;
+  --primary-foreground: 0 0% 100%;
+
+  --secondary: 262 52% 47%;
+  --secondary-foreground: 0 0% 100%;
+
+  --muted: 217 33% 17%;
+  --muted-foreground: 215 20% 65%;
+
+  --accent: 217 33% 17%;
+  --accent-foreground: 210 40% 98%;
+
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 210 40% 98%;
+
+  --border: 217 33% 17%;
+  --input: 217 33% 17%;
+  --ring: 221 83% 53%;
+
+  --gradient-start: 221 83% 53%;
+  --gradient-end: 262 52% 47%;
+  --gradient-accent: 340 82% 52%;
 }
 
 @layer base {
@@ -74,6 +125,151 @@
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Typography improvements */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold tracking-tight;
+  }
+
+  h1 {
+    @apply text-5xl md:text-6xl lg:text-7xl;
+  }
+
+  h2 {
+    @apply text-4xl md:text-5xl lg:text-6xl;
+  }
+
+  h3 {
+    @apply text-3xl md:text-4xl;
+  }
+}
+
+@layer utilities {
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-[hsl(var(--gradient-start))] via-[hsl(var(--gradient-accent))] to-[hsl(var(--gradient-end))] bg-clip-text text-transparent;
+  }
+
+  /* Gradient background */
+  .gradient-bg {
+    @apply bg-gradient-to-br from-[hsl(var(--gradient-start))] via-[hsl(var(--gradient-accent))] to-[hsl(var(--gradient-end))];
+  }
+
+  /* Glass morphism */
+  .glass {
+    @apply bg-white/10 backdrop-blur-lg border border-white/20;
+  }
+
+  .glass-dark {
+    @apply bg-black/10 backdrop-blur-lg border border-black/20;
+  }
+
+  /* Smooth transitions */
+  .transition-smooth {
+    transition: all var(--animation-duration) var(--animation-timing);
+  }
+
+  /* Hover lift effect */
+  .hover-lift {
+    @apply transition-smooth hover:-translate-y-1 hover:shadow-xl;
+  }
+
+  /* Animated gradient background */
+  .animated-gradient {
+    background: linear-gradient(-45deg,
+        hsl(var(--gradient-start)),
+        hsl(var(--gradient-accent)),
+        hsl(var(--gradient-end)),
+        hsl(var(--primary)));
+    background-size: 400% 400%;
+    animation: gradient 15s ease infinite;
+  }
+
+  @keyframes gradient {
+    0% {
+      background-position: 0% 50%;
+    }
+
+    50% {
+      background-position: 100% 50%;
+    }
+
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  /* Fade in animation */
+  .fade-in {
+    animation: fadeIn var(--animation-duration) var(--animation-timing);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Shimmer effect for loading */
+  .shimmer {
+    background: linear-gradient(90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 20%,
+        rgba(255, 255, 255, 0.5) 60%,
+        rgba(255, 255, 255, 0));
+    animation: shimmer 2s infinite;
+    background-size: 200% 100%;
+  }
+
+  @keyframes shimmer {
+    0% {
+      background-position: -200% 0;
+    }
+
+    100% {
+      background-position: 200% 0;
+    }
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-muted;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary/50 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary;
+}
+
+/* Selection */
+::selection {
+  @apply bg-primary/20 text-primary-foreground;
 }
