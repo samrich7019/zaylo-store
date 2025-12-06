@@ -69,33 +69,9 @@ export async function POST(request: NextRequest) {
 
         if (!response.ok) {
             const error = await response.text()
-            throw new Error(`Shopify API error: ${error}`)
-        }
-
-        const data = await response.json()
-
-        return NextResponse.json({
-            success: true,
-            message: 'Product imported successfully',
-            product: {
-                id: data.product.id,
-                title: data.product.title,
-                shopifyUrl: `https://${SHOPIFY_DOMAIN}/admin/products/${data.product.id}`,
-                storeUrl: `https://${SHOPIFY_DOMAIN.replace('.myshopify.com', '')}/products/${data.product.handle}`,
-                hhcPrice: scrapedProduct.price,
-                sellingPrice: sellingPrice,
-                profit: sellingPrice - scrapedProduct.price,
-                category: productType
-            }
-        })
-    } catch (error) {
-        console.error('Import error:', error)
-        return NextResponse.json(
-            {
-                success: false,
-                error: error instanceof Error ? error.message : 'Unknown error'
-            },
-            { status: 500 }
+            error: error instanceof Error ? error.message : 'Unknown error'
+        },
+        { status: 500 }
         )
     }
 }
