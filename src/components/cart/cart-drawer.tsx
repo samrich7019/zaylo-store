@@ -106,11 +106,17 @@ export function CartDrawer() {
                                     <p className="text-xs text-gray-400 text-center">
                                         Shipping and taxes calculated at checkout.
                                     </p>
-                                    <a href={cart.checkoutUrl} className="block w-full">
-                                        <Button className="w-full" size="lg">
-                                            Checkout
+                                    {cart.checkoutUrl ? (
+                                        <Button className="w-full" size="lg" asChild>
+                                            <a href={cart.checkoutUrl}>
+                                                Checkout
+                                            </a>
                                         </Button>
-                                    </a>
+                                    ) : (
+                                        <Button className="w-full" size="lg" disabled>
+                                            Loading Checkout...
+                                        </Button>
+                                    )}
                                 </div>
                             </>
                         )}
