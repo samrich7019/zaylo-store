@@ -168,8 +168,23 @@
   .hover-lift {
     @apply transition-all duration-300 ease-out hover:-translate-y-1 hover:shadow-xl;
   }
+
+  /* Throne-style image transitions */
+  .image-fade {
+    @apply transition-opacity duration-500 ease-in-out;
+  }
+
+  .image-scale {
+    @apply transition-transform duration-700 ease-out;
+  }
+
+  /* Throne slide-up animation */
+  .slide-up {
+    @apply transition-all duration-500 ease-out;
+  }
 }
 
+/* Custom scrollbar */
 ::-webkit-scrollbar {
   width: 10px;
 }
@@ -186,6 +201,54 @@
   @apply bg-primary;
 }
 
+/* Selection */
 ::selection {
   @apply bg-primary/20 text-primary-foreground;
+}
+
+/* Throne-style animations */
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out forwards;
 }
