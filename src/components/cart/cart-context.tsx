@@ -46,19 +46,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }, [])
 
     const addItem = async (variantId: string, quantity: number) => {
-        if (!cart) {
-            const newCart = await createCartAction()
-            if (newCart) {
-                setCart(newCart)
-                localStorage.setItem("cartId", newCart.id)
-                const updatedCart = await addToCartAction(newCart.id, [{ merchandiseId: variantId, quantity }])
+        console.log("Adding item to cart:", variantId, quantity);
+        try {
+            if (!cart) {
+                console.log("No cart found, creating new one...");
+                const newCart = await createCartAction()
+                console.log("New cart created:", newCart);
+                if (newCart) {
+                    setCart(newCart)
+                    localStorage.setItem("cartId", newCart.id)
+                    const updatedCart = await addToCartAction(newCart.id, [{ merchandiseId: variantId, quantity }])
+                    console.log("Item added to new cart:", updatedCart);
+                    if (updatedCart) setCart(updatedCart)
+                }
+            } else {
+                console.log("Adding to existing cart:", cart.id);
+                const updatedCart = await addToCartAction(cart.id, [{ merchandiseId: variantId, quantity }])
+                console.log("Item added to existing cart:", updatedCart);
                 if (updatedCart) setCart(updatedCart)
             }
-        } else {
-            const updatedCart = await addToCartAction(cart.id, [{ merchandiseId: variantId, quantity }])
-            if (updatedCart) setCart(updatedCart)
+            openCart()
+        } catch (error) {
+            console.error("Error adding item to cart:", error);
         }
-        openCart()
     }
 
     const removeItem = async (lineId: string) => {
