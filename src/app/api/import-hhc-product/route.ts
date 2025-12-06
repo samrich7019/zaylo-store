@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
         const productType = categorizeProduct(scrapedProduct.title, scrapedProduct.description)
 
         // Create product in Shopify
-        const shopifyProduct = {
+        const shopify Product = {
             title: scrapedProduct.title,
             body_html: scrapedProduct.description,
             vendor: scrapedProduct.vendor,
@@ -47,8 +47,8 @@ export async function POST(request: NextRequest) {
             variants: [{
                 price: sellingPrice.toString(),
                 sku: scrapedProduct.sku || `HHC-${Date.now()}`,
-                inventory_management: null, // Don't track inventory for dropshipping
-                inventory_policy: 'continue', // Allow orders even if out of stock
+                inventory_management: null,
+                inventory_policy: 'continue',
             }],
             images: scrapedProduct.images.map((url, index) => ({
                 src: url,
@@ -69,9 +69,34 @@ export async function POST(request: NextRequest) {
 
         if (!response.ok) {
             const error = await response.text()
-            error: error instanceof Error ? error.message : 'Unknown error'
-        },
-        { status: 500 }
+            throw new Error(`Shopify API error: ${error}`)
+        }
+
+        const data = await response.json()
+        const storeDomain = SHOPIFY_DOMAIN?.replace('.myshopify.com', '') || 'zaylo-store.one'
+
+        return NextResponse.json({
+            success: true,
+            message: 'Product imported successfully',
+            product: {
+                id: data.product.id,
+                title: data.product.title,
+                shopifyUrl: `https://${SHOPIFY_DOMAIN}/admin/products/${data.product.id}`,
+                storeUrl: `https://${storeDomain}/products/${data.product.handle}`,
+                hhcPrice: scrapedProduct.price,
+                sellingPrice: sellingPrice,
+                profit: sellingPrice - scrapedProduct.price,
+                category: productType
+            }
+        })
+    } catch (error) {
+        console.error('Import error:', error)
+        return NextResponse.json(
+            {
+                success: false,
+                error: error instanceof Error ? error.message : 'Unknown error'
+            },
+            { status: 500 }
         )
     }
 }
