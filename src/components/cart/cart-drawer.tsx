@@ -1,6 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
+import Link from "next/link"
 import { X, ShoppingBag, Minus, Plus, Trash2 } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCart } from "./cart-context"
@@ -42,9 +43,11 @@ export function CartDrawer() {
                                     <ShoppingBag className="h-8 w-8 text-gray-500" />
                                 </div>
                                 <p className="text-gray-400">Your cart is empty</p>
-                                <Button variant="default" onClick={closeCart}>
-                                    Start Shopping
-                                </Button>
+                                <Link href="/collections/all" onClick={closeCart}>
+                                    <Button variant="default">
+                                        Start Shopping
+                                    </Button>
+                                </Link>
                             </div>
                         ) : (
                             <>
