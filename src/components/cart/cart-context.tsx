@@ -25,6 +25,29 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         const initializeCart = async () => {
+            // Check if user is returning from checkout
+            if (typeof window !== 'undefined') {
+                const urlParams = new URLSearchParams(window.location.search);
+                const referrer = document.referrer;
+
+                // Clear cart if returning from checkout or if checkout was cancelled
+                if (urlParams.get('checkout_cancelled') === 'true' ||
+                    referrer.includes('checkout') ||
+                    referrer.includes('myshopify.com')) {
+                    console.log("User returned from checkout, clearing cart...");
+                    localStorage.removeItem('cartId');
+                    setCart(undefined);
+
+                    // Create a fresh cart
+                    const newCart = await createCartAction()
+                    if (newCart) {
+                        setCart(newCart)
+                        localStorage.setItem("cartId", newCart.id)
+                    }
+                    return;
+                }
+            }
+
             const existingCartId = localStorage.getItem("cartId")
             if (existingCartId) {
                 const existingCart = await getCartAction(existingCartId)
