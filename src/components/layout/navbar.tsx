@@ -5,9 +5,14 @@ import { ShoppingBag, Menu, Search, X } from "lucide-react"
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
+import { useCart } from "@/components/cart/cart-context"
+import { CartDrawer } from "@/components/cart/cart-drawer"
 
 export function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
+    const { openCart, cart } = useCart()
+
+    const cartCount = cart?.lines.edges.reduce((acc, e) => acc + e.node.quantity, 0) || 0
 
     return (
         <nav className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-md">
@@ -38,11 +43,18 @@ export function Navbar() {
                     <Button variant="ghost" size="icon" className="text-foreground/80 hover:text-primary">
                         <Search className="h-5 w-5" />
                     </Button>
-                    <Button variant="ghost" size="icon" className="text-foreground/80 hover:text-primary relative">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-foreground/80 hover:text-primary relative"
+                        onClick={openCart}
+                    >
                         <ShoppingBag className="h-5 w-5" />
-                        <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                            0
-                        </span>
+                        {cartCount > 0 && (
+                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                                {cartCount}
+                            </span>
+                        )}
                     </Button>
                     <Button
                         variant="ghost"
@@ -81,6 +93,7 @@ export function Navbar() {
                     </motion.div>
                 )}
             </AnimatePresence>
+            <CartDrawer />
         </nav>
     )
 }

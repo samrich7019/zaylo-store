@@ -1,10 +1,12 @@
 import { products as staticProducts } from "@/lib/data"
-import { Button } from "@/components/ui/button"
 import { Check, Shield, Truck, RotateCcw } from "lucide-react"
 import { getProduct } from "@/lib/shopify"
+import { AddToCart } from "@/components/product/add-to-cart"
+import { VariantSelector } from "@/components/product/variant-selector"
 
-export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductPage({ params, searchParams }: { params: Promise<{ id: string }>, searchParams: Promise<{ [key: string]: string | string[] | undefined }> }) {
     const { id } = await params
+    const resolvedSearchParams = await searchParams
 
     let product = null;
     const { product: shopifyProduct } = await getProduct(id);
@@ -17,27 +19,40 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             price: parseFloat(shopifyProduct.priceRange.minVariantPrice.amount),
             image: shopifyProduct.images.edges[0]?.node.url || "/images/product-case.png",
             category: "Accessory",
-            colors: shopifyProduct.variants.edges.map(e => e.node.title),
-            features: ["Premium Quality", "Fast Shipping", "Warranty Included"] // Default features
+            options: shopifyProduct.options,
+            variants: shopifyProduct.variants.edges.map(e => e.node),
+            features: ["Premium Quality", "Fast Shipping", "Warranty Included"]
         };
     } else {
-        product = staticProducts.find(p => p.id === id);
+        const staticProduct = staticProducts.find(p => p.id === id);
+        if (staticProduct) {
+            product = {
+                ...staticProduct,
+                options: [],
+                variants: [],
+                features: ["Premium Quality", "Fast Shipping", "Warranty Included"]
+            }
+        }
     }
 
     if (!product) {
         return <div className="container mx-auto px-4 py-20 text-foreground text-center">Product not found</div>
     }
 
-    // Default selected color logic would need client component wrapper or just display available colors
-    // For simplicity in this server component, we just list them.
+    // Determine selected variant
+    const selectedVariant = product.variants.find(variant => {
+        return variant.selectedOptions.every(option => {
+            return resolvedSearchParams[option.name] === option.value
+        })
+    }) || product.variants[0];
+
+    const price = selectedVariant ? parseFloat(selectedVariant.price.amount) : product.price
 
     return (
         <div className="container mx-auto px-4 py-20">
             <div className="grid md:grid-cols-2 gap-12">
                 {/* Image Gallery */}
-                <div
-                    className="bg-card rounded-2xl p-10 flex items-center justify-center border border-border/40"
-                >
+                <div className="bg-card rounded-2xl p-10 flex items-center justify-center border border-border/40">
                     <img
                         src={product.image}
                         alt={product.title}
@@ -46,33 +61,17 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 </div>
 
                 {/* Product Info */}
-                <div
-                    className="space-y-8"
-                >
+                <div className="space-y-8">
                     <div>
                         <p className="text-primary font-medium mb-2">{product.category}</p>
                         <h1 className="text-4xl font-bold text-foreground mb-4 font-montserrat">{product.title}</h1>
-                        <p className="text-2xl font-bold text-foreground">PKR {product.price.toLocaleString()}</p>
+                        <p className="text-2xl font-bold text-foreground">PKR {price.toLocaleString()}</p>
                     </div>
 
-                    <div className="space-y-4">
-                        <h3 className="text-sm font-medium text-muted-foreground">Available Options:</h3>
-                        <div className="flex gap-3 flex-wrap">
-                            {product.colors.map((color) => (
-                                <div
-                                    key={color}
-                                    className="h-10 px-4 rounded-md border border-border text-muted-foreground flex items-center justify-center text-sm font-medium"
-                                >
-                                    {color}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <VariantSelector options={product.options} variants={product.variants} />
 
                     <div className="space-y-4">
-                        <Button size="lg" className="w-full h-12 text-lg bg-primary text-primary-foreground hover:bg-primary/90">
-                            Add to Cart - PKR {product.price.toLocaleString()}
-                        </Button>
+                        <AddToCart variantId={selectedVariant?.id} price={price} />
                         <p className="text-xs text-center text-muted-foreground">Free shipping on orders over PKR 2,000</p>
                     </div>
 

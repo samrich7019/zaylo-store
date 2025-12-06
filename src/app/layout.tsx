@@ -4,6 +4,7 @@ import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
 import { Footer } from "@/components/layout/footer";
 import { ExitIntentPopup } from "@/components/ui/exit-popup";
+import { CartProvider } from "@/components/cart/cart-context";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" });
@@ -21,12 +22,14 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body className={`${inter.variable} ${montserrat.variable} font-sans antialiased`}>
-                <Navbar />
-                <main className="min-h-screen">
-                    {children}
-                </main>
-                <Footer />
-                <ExitIntentPopup />
+                <CartProvider>
+                    <Navbar />
+                    <main className="min-h-screen">
+                        {children}
+                    </main>
+                    <Footer />
+                    <ExitIntentPopup />
+                </CartProvider>
             </body>
         </html>
     );
