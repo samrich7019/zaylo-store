@@ -22,18 +22,21 @@ export function ProductShowcase({ products }: ProductShowcaseProps) {
     const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
 
     const formattedProducts = products && products.length > 0
-        ? products.slice(0, 3).map(p => ({
+        ? products.slice(0, 12).map(p => ({
             id: p.handle,
             title: p.title,
             price: parseFloat(p.priceRange.minVariantPrice.amount),
             image: p.images.edges[0]?.node.url || "/images/product-case.png",
-            category: "Tech",
+            category: p.productType || "Accessories",
             description: p.description
         }))
         : [
             { id: "1", title: "Ultra Wireless Headphones", price: 120, image: "/images/hero-headphones.png", category: "Audio" },
             { id: "2", title: "Voice Assistant Speaker", price: 246, image: "/images/hero-earbuds.png", category: "Smart Home" },
-            { id: "3", title: "BassSync Pro Earbuds", price: 89, image: "/images/hero-phone-case.png", category: "Audio" }
+            { id: "3", title: "BassSync Pro Earbuds", price: 89, image: "/images/hero-phone-case.png", category: "Audio" },
+            { id: "4", title: "Premium Phone Case", price: 45, image: "/images/hero-phone-case.png", category: "Cases" },
+            { id: "5", title: "Fast Charger", price: 35, image: "/images/hero-charger.png", category: "Chargers" },
+            { id: "6", title: "Wireless Earbuds", price: 75, image: "/images/hero-earbuds.png", category: "Audio" }
         ]
 
     return (
@@ -53,7 +56,7 @@ export function ProductShowcase({ products }: ProductShowcaseProps) {
                     </p>
                 </motion.div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
                     {formattedProducts.map((product, index) => (
                         <motion.div
                             key={product.id}

@@ -100,6 +100,7 @@ const PRODUCTS_QUERY = `
           handle
           title
           description
+          productType
           priceRange {
             minVariantPrice {
               amount
@@ -130,6 +131,7 @@ const COLLECTION_QUERY = `
             handle
             title
             description
+            productType
             priceRange {
               minVariantPrice {
                 amount
