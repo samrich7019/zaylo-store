@@ -1,101 +1,85 @@
 "use client"
 
 import { motion } from "framer-motion"
-import Link from "next/link"
-import Image from "next/image"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { ProductCard } from "@/components/product/product-card"
+import { useState } from "react"
+import { QuickView } from "@/components/product/quick-view"
 
 interface Product {
     id: string
     title: string
     price: number
     image: string
-    handle: string
+    category: string
+    description?: string
 }
 
 interface ProductShowcaseProps {
-    products: Product[]
+    products: any[]
 }
 
 export function ProductShowcase({ products }: ProductShowcaseProps) {
-    const displayProducts = products.slice(0, 6)
+    const [quickViewProduct, setQuickViewProduct] = useState<Product | null>(null)
+
+    const formattedProducts = products && products.length > 0
+        ? products.slice(0, 3).map(p => ({
+            id: p.handle,
+            title: p.title,
+            price: parseFloat(p.priceRange.minVariantPrice.amount),
+            image: p.images.edges[0]?.node.url || "/images/product-case.png",
+            category: "Tech",
+            description: p.description
+        }))
+        : [
+            { id: "1", title: "Ultra Wireless Headphones", price: 120, image: "/images/hero-headphones.png", category: "Audio" },
+            { id: "2", title: "Voice Assistant Speaker", price: 246, image: "/images/hero-earbuds.png", category: "Smart Home" },
+            { id: "3", title: "BassSync Pro Earbuds", price: 89, image: "/images/hero-phone-case.png", category: "Audio" }
+        ]
 
     return (
-        <section className="py-20 md:py-32 bg-muted/30">
+        <section className="py-20">
             <div className="container mx-auto px-4">
-                {/* Section Header */}
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ duration: 0.6 }}
-                    className="flex justify-between items-end mb-16"
+                    className="mb-12"
                 >
-                    <div>
-                        <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                            Best Sellers
-                        </h2>
-                        <p className="text-xl text-muted-foreground">
-                            Our most loved products
-                        </p>
-                    </div>
-                    <Link href="/collections/all">
-                        <Button variant="outline" className="group">
-                            View All
-                            <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                        </Button>
-                    </Link>
+                    <h2 className="text-4xl md:text-5xl font-bold mb-4">
+                        <span className="text-orange-500">Tech You'll</span> Truly Love
+                    </h2>
+                    <p className="text-muted-foreground text-lg">
+                        Upgrade every day with connected devices delivering effortless performance
+                    </p>
                 </motion.div>
 
-                {/* Products Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {displayProducts.map((product, index) => (
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {formattedProducts.map((product, index) => (
                         <motion.div
                             key={product.id}
-                            initial={{ opacity: 0, y: 20 }}
+                            initial={{ opacity: 0, y: 30 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            transition={{ duration: 0.6, delay: index * 0.1 }}
+                            transition={{ delay: index * 0.1 }}
                         >
-                            <Link href={`/products/${product.handle}`}>
-                                <div className="group relative bg-card rounded-2xl overflow-hidden hover-lift border border-border">
-                                    {/* Image Container */}
-                                    <div className="relative aspect-square overflow-hidden bg-muted">
-                                        <Image
-                                            src={product.image}
-                                            alt={product.title}
-                                            fill
-                                            className="object-cover group-hover:scale-110 transition-transform duration-500"
-                                        />
-                                        {/* Quick View Overlay */}
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                                            <Button variant="secondary" size="sm">
-                                                Quick View
-                                            </Button>
-                                        </div>
-                                    </div>
-
-                                    {/* Product Info */}
-                                    <div className="p-6">
-                                        <h3 className="font-semibold text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-                                            {product.title}
-                                        </h3>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-2xl font-bold">
-                                                PKR {product.price.toLocaleString()}
-                                            </span>
-                                            <div className="opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <ArrowRight className="w-5 h-5 text-primary" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
+                            <ProductCard
+                                id={product.id}
+                                title={product.title}
+                                price={product.price}
+                                image={product.image}
+                                category={product.category}
+                                onQuickView={() => setQuickViewProduct(product)}
+                            />
                         </motion.div>
                     ))}
                 </div>
             </div>
+
+            <QuickView
+                product={quickViewProduct || { id: "", title: "", price: 0, image: "", category: "" }}
+                isOpen={!!quickViewProduct}
+                onClose={() => setQuickViewProduct(null)}
+            />
         </section>
     )
 }
