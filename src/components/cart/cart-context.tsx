@@ -28,15 +28,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
             // Check if user is returning from checkout
             if (typeof window !== 'undefined') {
                 const urlParams = new URLSearchParams(window.location.search);
-                const referrer = document.referrer;
 
-                // Clear cart if returning from checkout or if checkout was cancelled
-                if (urlParams.get('checkout_cancelled') === 'true' ||
-                    referrer.includes('checkout') ||
-                    referrer.includes('myshopify.com')) {
+                // Clear cart if returning from checkout
+                if (urlParams.get('from_checkout') === 'true') {
                     console.log("User returned from checkout, clearing cart...");
                     localStorage.removeItem('cartId');
                     setCart(undefined);
+
+                    // Remove the parameter from URL without reloading
+                    window.history.replaceState({}, '', window.location.pathname);
 
                     // Create a fresh cart
                     const newCart = await createCartAction()
