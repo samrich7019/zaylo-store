@@ -6,6 +6,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCart } from "@/components/cart/cart-context"
+import { SearchModal } from "./search-modal"
 
 const categories = [
     { name: "Phone Cases", href: "/collections/phone-cases", icon: Smartphone },
@@ -18,6 +19,7 @@ export function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [isScrolled, setIsScrolled] = useState(false)
     const [showCategories, setShowCategories] = useState(false)
+    const [isSearchOpen, setIsSearchOpen] = useState(false)
     const { openCart, cart } = useCart()
 
     const cartCount = cart?.lines.edges.reduce((acc, e) => acc + e.node.quantity, 0) || 0
@@ -32,8 +34,8 @@ export function Navbar() {
 
     return (
         <nav className={`sticky top-0 z-50 w-full transition-all duration-300 ${isScrolled
-                ? "border-b border-border/40 bg-background/95 backdrop-blur-lg shadow-sm"
-                : "bg-background/80 backdrop-blur-md"
+            ? "border-b border-border/40 bg-background/95 backdrop-blur-lg shadow-sm"
+            : "bg-background/80 backdrop-blur-md"
             }`}>
             <div className="container mx-auto flex h-16 items-center justify-between px-4">
                 {/* Logo */}
@@ -114,7 +116,12 @@ export function Navbar() {
 
                 {/* Actions */}
                 <div className="flex items-center gap-2">
-                    <Button variant="ghost" size="icon" className="text-foreground/80 hover:text-primary">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="text-foreground/80 hover:text-primary"
+                        onClick={() => setIsSearchOpen(true)}
+                    >
                         <Search className="h-5 w-5" />
                     </Button>
                     <Button
@@ -184,6 +191,9 @@ export function Navbar() {
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Search Modal */}
+            <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
         </nav>
     )
 }
