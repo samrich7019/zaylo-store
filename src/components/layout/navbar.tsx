@@ -6,7 +6,6 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { motion, AnimatePresence } from "framer-motion"
 import { useCart } from "@/components/cart/cart-context"
-import { CartDrawer } from "@/components/cart/cart-drawer"
 
 export function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -93,7 +92,6 @@ export function Navbar() {
                     </motion.div>
                 )}
             </AnimatePresence>
-            <CartDrawer />
         </nav>
     )
 }

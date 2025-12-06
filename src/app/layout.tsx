@@ -14,6 +14,10 @@ export const metadata: Metadata = {
     description: "Shop iPhone cases, earbuds, chargers & more at Zaylo. Fast delivery, COD available, 7-day warranty.",
 };
 
+import { CartDrawer } from "@/components/cart/cart-drawer";
+
+// ... imports
+
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -24,6 +28,7 @@ export default function RootLayout({
             <body className={`${inter.variable} ${montserrat.variable} font-sans antialiased`}>
                 <CartProvider>
                     <Navbar />
+                    <CartDrawer />
                     <main className="min-h-screen">
                         {children}
                     </main>
